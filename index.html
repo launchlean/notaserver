@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#060608">
+  <meta name="description" content="NotaServer — your private application command centre.">
+  <title>NotaServer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:dark;--bg:#060608;--surface:#111114;--surface-2:#17171b;--surface-3:#1d1d22;--text:#e8e8ec;--secondary:#9a9a9e;--tertiary:#5c5c60;--line:rgba(255,255,255,.11);--line-soft:rgba(255,255,255,.06);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--pink:#FF2D7B;--pink-soft:rgba(255,45,123,.13);--yellow:#FFD23F;--yellow-soft:rgba(255,210,63,.12);--font:'Geist',sans-serif;--mono:'Geist Mono',monospace;--spring:cubic-bezier(.32,.72,0,1);--header:68px;--rail:252px}
+    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.018;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
+    button,a{font:inherit}.site-header{position:fixed;inset:0 0 auto 0;height:var(--header);display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 28px;background:rgba(6,6,8,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(18px);z-index:10}
+    .wordmark{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none}.brand-mark{width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,45,123,.55);background:radial-gradient(circle at 70% 26%,rgba(255,210,63,.22),transparent 28%),linear-gradient(145deg,#24101d,#0f0a0e);position:relative;box-shadow:inset 0 1px rgba(255,255,255,.08)}.brand-mark::before,.brand-mark::after{content:"";position:absolute;border-radius:50%}.brand-mark::before{width:8px;height:8px;background:var(--yellow);top:8px;right:8px;box-shadow:0 0 12px rgba(255,210,63,.45)}.brand-mark::after{width:5px;height:5px;background:var(--pink);left:8px;bottom:8px}.wordmark strong{font-size:1.02rem;font-weight:600;letter-spacing:-.025em}.wordmark strong span{color:var(--pink)}
+    .header-centre{font:500 .66rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--tertiary)}.header-meta{display:flex;align-items:center;gap:18px}.clockbox{text-align:right}.clock{font:500 .88rem var(--mono);letter-spacing:.04em}.date{margin-top:2px;font:400 .56rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--tertiary)}.lan-pill{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid rgba(255,210,63,.22);border-radius:10px;color:var(--yellow);font:600 .62rem var(--mono);letter-spacing:.13em}.lan-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--yellow)}
+
+    /* ── Sticky-note toggle ── */
+    .sticky-toggle{display:flex;align-items:center;gap:6px;padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.sticky-toggle button{height:28px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:var(--secondary);font:500 .62rem var(--mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all .2s var(--spring)}.sticky-toggle button:hover{color:var(--text)}.sticky-toggle button.sel{background:var(--pink);color:#fff}
+
+    /* ── Sticky overlay (mode 2) ── */
+    .sticky-overlay{position:fixed;top:var(--header);left:0;right:var(--rail);bottom:0;z-index:5;pointer-events:none;opacity:0;transition:opacity .35s var(--spring)}body.mode-overlay .sticky-overlay{opacity:1;pointer-events:auto}.sticky-note{position:absolute;width:210px;min-height:150px;padding:18px 16px 38px;cursor:grab;font-family:var(--font);font-size:.78rem;line-height:1.5;color:#1a1a1a;box-shadow:2px 3px 8px rgba(0,0,0,.25),inset 0 -8px 18px rgba(0,0,0,.06);word-break:break-word;user-select:none}.sticky-note:active{cursor:grabbing}.sticky-note.done{opacity:.35;filter:grayscale(.3)}.sticky-note.done .sn-body{text-decoration:line-through}.sticky-note.yellow{background:linear-gradient(170deg,#fdf2b3,#f8e88a 30%,#f5df6e);transform:rotate(-2deg)}.sticky-note.pink{background:linear-gradient(170deg,#fcc6d9,#f9a4c0 30%,#f789b0);transform:rotate(1.5deg)}.sticky-note.green{background:linear-gradient(170deg,#c8f0c8,#a8e6a8 30%,#8ddb8d);transform:rotate(-1deg)}.sticky-note.blue{background:linear-gradient(170deg,#c4dafa,#a8cdf5 30%,#8dbef0);transform:rotate(2deg)}.sticky-note.lavender{background:linear-gradient(170deg,#e2d4f5,#cebbee 30%,#baa2e7);transform:rotate(-2.5deg)}.sticky-note.orange{background:linear-gradient(170deg,#fde0c2,#fcc99a 30%,#fbb877);transform:rotate(1deg)}.sticky-note::before{content:"";position:absolute;top:4px;left:50%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,rgba(0,0,0,.15),rgba(0,0,0,.25));box-shadow:0 1px 2px rgba(0,0,0,.1)}.sn-meta{position:absolute;bottom:6px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center}.sn-tags{display:flex;gap:2px;flex-wrap:wrap}.sn-tag{font:500 .48rem var(--mono);letter-spacing:.06em;padding:1px 4px;border-radius:3px;background:rgba(0,0,0,.08);color:rgba(0,0,0,.4);text-transform:uppercase}.sn-actions button{width:20px;height:20px;border-radius:3px;border:0;background:rgba(0,0,0,.06);color:rgba(0,0,0,.3);cursor:pointer;font-size:.6rem;transition:all .15s}.sn-actions button:hover{background:rgba(0,0,0,.12);color:rgba(0,0,0,.5)}.sn-actions .del:hover{background:rgba(200,30,30,.15);color:#b91c1c}
+
+    /* ── Sticky board mode (mode 3) — iframe ── */
+    .sticky-board{position:fixed;top:var(--header);left:0;right:var(--rail);bottom:0;z-index:4;opacity:0;pointer-events:none;transition:opacity .35s var(--spring);background:var(--bg)}body.mode-board .sticky-board{opacity:1;pointer-events:auto}.sticky-board iframe{width:100%;height:100%;border:0}
+
+    .app-rail{position:fixed;right:0;top:var(--header);bottom:0;width:var(--rail);padding:26px 14px 16px;background:rgba(12,12,15,.96);border-left:1px solid var(--line);display:flex;flex-direction:column;z-index:9}.rail-head{padding:0 10px 18px}.rail-kicker{font:500 .58rem var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--tertiary)}.rail-title{margin:7px 0 0;font-size:1.05rem;font-weight:550;letter-spacing:-.03em}.rail-list{display:flex;flex-direction:column;gap:5px}.rail-link{position:relative;width:100%;min-height:50px;padding:0 10px;border:0;border-radius:12px;background:transparent;color:var(--secondary);display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:9px;text-align:left;cursor:pointer;transition:background .28s var(--spring),color .28s var(--spring),transform .28s var(--spring)}.rail-link:hover{background:var(--line-soft);color:var(--text);transform:translateX(-2px)}.rail-link:active{transform:scale(.985)}.rail-link.active{background:var(--pink-soft);color:var(--text)}.rail-link.active::before{content:"";position:absolute;right:-14px;width:3px;height:24px;border-radius:3px 0 0 3px;background:var(--pink)}.rail-icon{width:30px;height:30px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;background:var(--surface)}.rail-link.active .rail-icon{color:var(--pink);border-color:rgba(255,45,123,.25)}.rail-link svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.rail-name{font-size:.78rem;font-weight:500}.rail-status{width:6px;height:6px;border-radius:50%;background:var(--green)}.rail-foot{margin-top:auto;padding:16px 10px 2px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;color:var(--tertiary);font:400 .58rem var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .workspace{position:fixed;top:var(--header);left:0;right:var(--rail);bottom:0;overflow:hidden}.dashboard{height:100%;overflow:auto;padding:clamp(26px,4vw,54px);background:radial-gradient(circle at 18% 10%,rgba(255,45,123,.08),transparent 28%),radial-gradient(circle at 83% 78%,rgba(255,210,63,.04),transparent 28%),var(--bg)}.dashboard-inner{max-width:1280px;margin:0 auto}.hero-shell{padding:1px;border-radius:25px;background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.035) 42%,rgba(255,45,123,.18));box-shadow:0 28px 80px rgba(0,0,0,.25)}.hero{min-height:330px;border-radius:24px;background:linear-gradient(120deg,rgba(17,17,20,.98),rgba(12,12,15,.98));position:relative;overflow:hidden;padding:clamp(30px,5vw,66px)}.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to right,#000,transparent 80%)}.hero-copy{position:relative;z-index:1;max-width:760px}.eyebrow{display:flex;align-items:center;gap:10px;color:var(--secondary);font:500 .65rem var(--mono);letter-spacing:.18em;text-transform:uppercase}.eyebrow::before{content:"";width:24px;height:1px;background:var(--pink)}h1{margin:22px 0 16px;font-size:clamp(2.6rem,5.5vw,5.8rem);line-height:.94;letter-spacing:-.068em;font-weight:600}h1 span{color:var(--pink)}h1 i{color:var(--yellow);font-style:normal;font-weight:300}.intro{max-width:650px;margin:0;color:var(--secondary);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.65;letter-spacing:-.015em}.intro b{color:var(--text);font-weight:500}.hero-orbit{position:absolute;right:5%;top:50%;width:235px;height:235px;transform:translateY(-50%);border:1px solid rgba(255,255,255,.08);border-radius:50%}.hero-orbit::before,.hero-orbit::after{content:"";position:absolute;border-radius:50%}.hero-orbit::before{inset:34px;border:1px dashed rgba(255,45,123,.24)}.hero-orbit::after{inset:72px;border:1px solid rgba(255,210,63,.18)}
+    .section-head{margin:34px 2px 15px;display:flex;align-items:end;justify-content:space-between}.section-head h2{margin:0;font-size:1.02rem;font-weight:550;letter-spacing:-.025em}.section-head span{font:400 .59rem var(--mono);letter-spacing:.12em;color:var(--tertiary);text-transform:uppercase}.quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.quick-card{min-height:152px;border:1px solid var(--line);border-radius:17px;padding:20px;background:var(--surface);position:relative;overflow:hidden;color:var(--text);text-decoration:none;cursor:pointer;transition:transform .34s var(--spring),border-color .34s var(--spring)}.quick-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.2)}.quick-card.primary{background:linear-gradient(135deg,rgba(255,45,123,.15),var(--surface) 60%)}.quick-card.yellow{background:linear-gradient(135deg,rgba(255,210,63,.12),var(--surface) 60%)}.quick-card.green{background:linear-gradient(135deg,rgba(74,222,128,.1),var(--surface) 60%)}.card-top{display:flex;align-items:center;justify-content:space-between}.card-tag{font:500 .58rem var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--secondary)}.card-arrow{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center}.card-arrow svg{width:14px;fill:none;stroke:currentColor;stroke-width:1.5}.quick-card h3{margin:33px 0 5px;font-size:1.4rem;font-weight:550;letter-spacing:-.04em}.quick-card p{margin:0;color:var(--secondary);font-size:.76rem;line-height:1.5}.quick-card .live{position:absolute;right:20px;bottom:20px;display:flex;align-items:center;gap:6px;color:var(--green);font:500 .56rem var(--mono);letter-spacing:.1em;text-transform:uppercase}.quick-card .live::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green)}
+    .workspace-view{position:absolute;inset:0;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .35s var(--spring)}body.app-active .dashboard{display:none}body.app-active .workspace-view{opacity:1;pointer-events:auto}.workspace-view iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg);opacity:0;transition:opacity .3s var(--spring);pointer-events:none}.workspace-view iframe.active{opacity:1;pointer-events:auto}.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--secondary);font:500 .63rem var(--mono);letter-spacing:.15em;text-transform:uppercase;opacity:0;pointer-events:none}.loading.visible{opacity:1}.app-error{position:absolute;inset:0;display:none;place-items:center;text-align:center;color:var(--secondary)}.app-error.visible{display:grid}.app-error button{margin-top:14px;padding:10px 15px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
+
+    /* ── Hide dashboard when overlay/board is active ── */
+    body.mode-board .dashboard{display:none}
+    body.mode-board .workspace-view{display:none}
+
+    @media(max-width:1050px){:root{--rail:210px}.hero-orbit{opacity:.55;right:-5%}.quick-grid{grid-template-columns:1fr 1fr}.quick-card:first-child{grid-column:1/-1}.sticky-toggle button{padding:0 8px;font-size:.56rem}}
+    @media(max-width:700px){:root{--header:60px;--rail:72px}.site-header{padding:0 14px}.header-centre,.date,.lan-pill,.sticky-toggle{display:none}.brand-mark{width:32px;height:32px}.wordmark strong{font-size:.92rem}.app-rail{padding:16px 9px 12px}.rail-head,.rail-name,.rail-status,.rail-foot{display:none}.rail-list{gap:8px}.rail-link{display:grid;grid-template-columns:1fr;padding:0;min-height:48px}.rail-link.active::before{right:-9px}.rail-icon{margin:auto}.dashboard{padding:18px 14px 30px}.hero{min-height:360px;padding:30px 24px}.hero-orbit{width:170px;height:170px;top:auto;bottom:-65px;right:-35px;transform:none}.quick-grid{grid-template-columns:1fr}.quick-card:first-child{grid-column:auto}h1{font-size:2.75rem}.intro{font-size:.84rem}.sticky-note{width:170px;min-height:120px;font-size:.7rem}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="wordmark" href="#home" data-home><span class="brand-mark" aria-hidden="true"></span><strong>Nota<span>Server</span></strong></a>
+  <div class="header-centre" id="contextLabel">Private application network</div>
+  <div class="header-meta">
+    <div class="sticky-toggle" id="stickyToggle">
+      <button data-mode="home" class="sel">Home</button>
+      <button data-mode="overlay">✷ Overlay</button>
+      <button data-mode="board">📋 Board</button>
+    </div>
+    <div class="clockbox"><div class="clock" id="clock">--:--:--</div><div class="date" id="date">LAN only</div></div><span class="lan-pill">LAN</span>
+  </div>
+</header>
+<main class="workspace">
+  <section class="dashboard" id="dashboard"><div class="dashboard-inner">
+    <div class="hero-shell"><article class="hero"><div class="hero-copy">
+      <div class="eyebrow">APPLICATION SHELL / LOCAL NETWORK</div>
+      <h1>NotaServer <span>Dashboard</span><i>.</i></h1>
+      <p class="intro">Welcome to your <b>local server hub</b>. Every application here runs on your network. Use the sidebar to switch between services — each one also works as a standalone page.</p>
+    </div><div class="hero-orbit" aria-hidden="true"></div></article></div>
+    <div class="section-head"><h2>Quick access</h2><span>Live on your network</span></div>
+    <div class="quick-grid">
+      <a class="quick-card primary" href="#monitor" data-app="monitor"><div class="card-top"><span class="card-tag">System intelligence</span><span class="card-arrow"><svg viewBox="0 0 24 24"><path d="M5 19 19 5M9 5h10v10"/></svg></span></div><h3>Monitor</h3><p>Live processor, memory, storage, network and service telemetry.</p><span class="live">Live stream</span></a>
+      <a class="quick-card yellow" href="#music" data-app="music"><div class="card-top"><span class="card-tag">Local library</span><span class="card-arrow"><svg viewBox="0 0 24 24"><path d="M5 19 19 5M9 5h10v10"/></svg></span></div><h3>NotMusic</h3><p>Your music, queue and playlists. No algorithms.</p><span class="live">Connected</span></a>
+      <a class="quick-card primary" href="#videos" data-app="videos"><div class="card-top"><span class="card-tag">Private cinema</span><span class="card-arrow"><svg viewBox="0 0 24 24"><path d="M5 19 19 5M9 5h10v10"/></svg></span></div><h3>NotVideos</h3><p>Your films, progress and favourites. No subscriptions.</p><span class="live">Ready</span></a>
+      <a class="quick-card green" href="http://notaos.notaserver/" target="_blank" rel="noopener"><div class="card-top"><span class="card-tag">Vehicle interface</span><span class="card-arrow"><svg viewBox="0 0 24 24"><path d="M5 19 19 5M9 5h10v10"/></svg></span></div><h3>NotaOS</h3><p>Driving dashboard, sensors and navigation.</p><span class="live">Available</span></a>
+    </div>
+  </div></section>
+
+  <!-- Mode 2: Sticky overlay -->
+  <div class="sticky-overlay" id="stickyOverlay"></div>
+
+  <!-- Mode 3: Sticky board (iframe) -->
+  <div class="sticky-board" id="stickyBoard"><iframe id="stickyFrame" src="https://nottodo.notaserver/" title="Sticky Notes Board" allow="autoplay"></iframe></div>
+
+  <section class="workspace-view" id="workspaceView" aria-live="polite"><div class="loading" id="loading">Opening application</div><div class="app-error" id="appError"><div><p id="appErrorMessage">Application unavailable</p><button type="button" id="retry">Try again</button></div></div></section>
+</main>
+<aside class="app-rail" aria-label="Application navigation"><div class="rail-head"><div class="rail-kicker">Workspace</div><h2 class="rail-title">Your applications</h2></div><nav class="rail-list" id="appNav"></nav><div class="rail-foot"><span>NotaServer</span><span>LAN only</span></div></aside>
+
+<!-- Hidden iframe for cross-origin localStorage access to NotTodo -->
+<iframe id="notodoBridge" src="https://nottodo.notaserver/" style="display:none" title=""></iframe>
+
+<script>
+const icons={home:'<svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9H3z"/><path d="M9 20v-6h6v6"/></svg>',monitor:'<svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>',music:'<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',videos:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg>',notaos:'<svg viewBox="0 0 24 24"><path d="M4 16V9l3-4h10l3 4v7"/><path d="M6 16h12M7 19v2M17 19v2M7 11h10"/></svg>',sensors:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M8 8a6 6 0 0 0 0 8M16 8a6 6 0 0 1 0 8M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/></svg>',casaos:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><circle cx="17.5" cy="17.5" r="4.5"/></svg>',downtify:'<svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>',metube:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m10 9 6 3-6 3z" fill="currentColor"/><circle cx="8" cy="19" r="2"/><path d="M16 19h3"/></svg>',invoice:'<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',chat:'<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',todo:'<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',wip:'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'};
+const APPS=[
+{id:'home',name:'Overview',embed:false,external:'#home',icon:icons.home},
+{id:'monitor',name:'Monitor',embed:true,url:'https://monitor.notaserver/?mode=embed',external:'https://monitor.notaserver/',icon:icons.monitor},
+{id:'music',name:'NotMusic',embed:true,url:'https://notmusic.notaserver/notmusic/?mode=embed',external:'https://notmusic.notaserver/notmusic/',icon:icons.music},
+{id:'videos',name:'NotVideos',embed:true,url:'https://notvideos.notaserver/notvideos/?mode=embed',external:'https://notvideos.notaserver/notvideos/',icon:icons.videos},
+{id:'chat',name:'NotaChat',embed:false,external:'https://notachat.notaserver/',icon:icons.chat},
+{id:'todo',name:'NotTodo',embed:false,external:'https://nottodo.notaserver/',icon:icons.todo},
+{id:'wip',name:'In Progress',embed:false,external:'https://notinprogress.notaserver/',icon:icons.wip},
+{id:'casaos',name:'CasaOS',embed:false,external:'https://casaos.notaserver/',icon:icons.casaos},
+{id:'downtify',name:'Downtify',embed:false,external:'https://downtify.notaserver/',icon:icons.downtify},
+{id:'metube',name:'MeTube',embed:false,external:'https://metube.notaserver/',icon:icons.metube},
+{id:'invoice',name:'Invoicing',embed:false,external:'https://invoice.notaserver/',icon:icons.invoice},
+{id:'notaos',name:'NotaOS',embed:false,external:'http://notaos.notaserver/',newtab:true,icon:icons.notaos},
+{id:'sensors',name:'Sensors',embed:false,external:'https://sensors.notaserver/',icon:icons.sensors}
+];let active='home',failed=null;const cache=new Map(),nav=document.getElementById('appNav');
+function buildNav(){nav.replaceChildren(...APPS.map(app=>{const b=document.createElement('button');b.type='button';b.className='rail-link'+(app.id==='home'?' active':'');if(app.placeholder){b.classList.add('placeholder');b.dataset.placeholder='true';b.setAttribute('aria-disabled','true');b.setAttribute('aria-label',app.name+' — still installing');b.title=app.name+' is still installing'}else{b.dataset.app=app.id;b.onclick=()=>openApp(app.id)}b.innerHTML='<span class="rail-icon">'+app.icon+'</span><span class="rail-name">'+app.name+'</span><span class="rail-status"></span>';return b}))}
+function setActive(id){document.querySelectorAll('.rail-link').forEach(b=>b.classList.toggle('active',b.dataset.app===id));active=id;document.getElementById('contextLabel').textContent=id==='home'?'Private application network':APPS.find(x=>x.id===id)?.name||'NotaServer'}
+function showHome(){document.body.classList.remove('app-active','mode-overlay','mode-board');cache.forEach(f=>f.classList.remove('active'));setActive('home');history.replaceState(null,'','#home')}
+function openApp(id){const app=APPS.find(x=>x.id===id);if(!app||id==='home'){showHome();return}if(!app.embed){app.newtab?window.open(app.external,'_blank','noopener'):location.href=app.external;return}document.body.classList.add('app-active');document.body.classList.remove('mode-overlay','mode-board');document.getElementById('appError').classList.remove('visible');document.getElementById('loading').classList.add('visible');cache.forEach(f=>f.classList.remove('active'));let frame=cache.get(id);if(!frame){frame=document.createElement('iframe');frame.src=app.url;frame.title=app.name;frame.allow='autoplay; fullscreen';frame.addEventListener('load',()=>document.getElementById('loading').classList.remove('visible'));frame.addEventListener('error',()=>showError(app.name));cache.set(id,frame);document.getElementById('workspaceView').append(frame)}frame.classList.add('active');setActive(id);failed=null;history.replaceState(null,'','#'+id)}
+function showError(name){document.getElementById('loading').classList.remove('visible');document.getElementById('appErrorMessage').textContent=name+' could not be opened.';document.getElementById('appError').classList.add('visible');failed=active}
+document.querySelectorAll('[data-app]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openApp(a.dataset.app)}));document.querySelectorAll('[data-home]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showHome()}));document.getElementById('retry').onclick=()=>{const id=failed||active;if(cache.has(id)){cache.get(id).remove();cache.delete(id)}openApp(id)};
+function tick(){const n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('en-GB',{hour12:false});document.getElementById('date').textContent=n.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase()}setInterval(tick,1000);tick();buildNav();const initial=location.hash.slice(1);if(APPS.some(a=>a.id===initial)&&initial!=='home')openApp(initial);
+
+// ═══════════════════════════════════════════════════════════════
+//  Three-mode sticky-note toggle: Home | Overlay | Board
+// ═══════════════════════════════════════════════════════════════
+
+const COLORS=['yellow','pink','green','blue','lavender','orange'];
+const STORE='nottodo_notes';
+let stickyNotes=[], stickyDragging=null, stickyOffX=0, stickyOffY=0;
+const bridge=document.getElementById('notodoBridge');
+let bridgeReady=false;
+
+// ── Toggle buttons ──
+document.querySelectorAll('#stickyToggle button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#stickyToggle button').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+    const mode=btn.dataset.mode;
+    document.body.className=document.body.className.replace(/mode-\S+/g,'').trim();
+    document.body.classList.remove('app-active');
+    if(mode==='overlay'){document.body.classList.add('mode-overlay');loadStickyNotes();renderOverlay()
+    // If bridge not ready, reload iframe to trigger bridgeReady
+    if(!bridgeReady){bridge.src=bridge.src;setTimeout(()=>{if(!bridgeReady){bridge.src=bridge.src}},1000)}
+  }
+    else if(mode==='board'){document.body.classList.add('mode-board');document.getElementById('stickyFrame').src='https://nottodo.notaserver/'}
+    else{showHome()}
+    setActive('home');
+  });
+});
+
+// ── PostMessage bridge: read notes from NotTodo's localStorage ──
+function loadStickyNotes(){
+  if(bridgeReady) bridge.contentWindow.postMessage({type:'getNotes'},'https://nottodo.notaserver');
+}
+
+function saveStickyNotes(){
+  if(bridgeReady) bridge.contentWindow.postMessage({type:'setNotes',notes:stickyNotes},'https://nottodo.notaserver');
+}
+
+window.addEventListener('message',e=>{
+  if(e.origin!=='https://nottodo.notaserver')return;
+  if(e.data.type==='notes'&&e.data.notes){
+    stickyNotes=e.data.notes;
+    if(document.body.classList.contains('mode-overlay'))renderOverlay();
+  }
+  if(e.data.type==='bridgeReady'){bridgeReady=true;loadStickyNotes()}
+});
+
+// ── Render sticky notes on the overlay ──
+function renderOverlay(){
+  const el=document.getElementById('stickyOverlay');
+  el.querySelectorAll('.sticky-note').forEach(n=>n.remove());
+  if(!stickyNotes.length)return;
+  stickyNotes.forEach((n,i)=>{
+    if(n.x===undefined||n.y===undefined){
+      n.x=30+(i%4)*240+(Math.random()-0.5)*30;
+      n.y=20+Math.floor(i/4)*180+(Math.random()-0.5)*20;
+      n.color=n.color||COLORS[i%COLORS.length];
+    }
+    const div=document.createElement('div');
+    div.className='sticky-note '+(n.color||COLORS[i%COLORS.length])+(n.done?' done':'');
+    div.style.left=n.x+'px';div.style.top=n.y+'px';
+    div.dataset.i=i;
+    div.innerHTML='<div class="sn-body">'+esc(n.text)+'</div>'+
+      '<div class="sn-meta">'+
+        '<div class="sn-tags">'+(n.tags||[]).map(t=>'<span class="sn-tag">'+esc(t)+'</span>').join('')+'</div>'+
+        '<div class="sn-actions">'+
+          '<button title="'+(n.done?'Undo':'Done')+'" data-action="toggle" data-i="'+i+'">'+(n.done?'↩':'✓')+'</button>'+
+          '<button class="del" title="Remove" data-action="del" data-i="'+i+'">×</button>'+
+        '</div>'+
+      '</div>';
+
+    div.addEventListener('mousedown',e=>{
+      if(e.target.closest('button'))return;
+      stickyDragging=div;stickyOffX=e.clientX-div.offsetLeft;stickyOffY=e.clientY-div.offsetTop;
+      div.style.zIndex=99;div.style.cursor='grabbing';e.preventDefault();
+    });
+    el.appendChild(div);
+  });
+
+  el.querySelectorAll('[data-action=toggle]').forEach(b=>{
+    b.onclick=e=>{e.stopPropagation();const i=parseInt(b.dataset.i);stickyNotes[i].done=!stickyNotes[i].done;saveStickyNotes();renderOverlay()}});
+  el.querySelectorAll('[data-action=del]').forEach(b=>{
+    b.onclick=e=>{e.stopPropagation();stickyNotes.splice(parseInt(b.dataset.i),1);saveStickyNotes();renderOverlay()}});
+}
+
+document.addEventListener('mousemove',e=>{
+  if(!stickyDragging)return;
+  const ol=document.getElementById('stickyOverlay');
+  const rect=ol.getBoundingClientRect();
+  const i=parseInt(stickyDragging.dataset.i);
+  stickyNotes[i].x=e.clientX-rect.left-stickyOffX;
+  stickyNotes[i].y=e.clientY-rect.top-stickyOffY;
+  stickyDragging.style.left=stickyNotes[i].x+'px';
+  stickyDragging.style.top=stickyNotes[i].y+'px';
+});
+
+document.addEventListener('mouseup',()=>{
+  if(!stickyDragging)return;
+  stickyDragging.style.zIndex='';stickyDragging.style.cursor='grab';
+  stickyDragging=null;saveStickyNotes();
+});
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+</script>
+</body>
+</html>
